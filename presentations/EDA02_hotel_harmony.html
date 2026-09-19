@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hotel Harmony: Data Insights for Optimized Operations</title>
+  <style>
+    :root { --navy:#0f172a; --teal:#0e7490; --bg:#f8fafc; --card:#fff; --muted:#475569; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: "Segoe UI", Calibri, sans-serif; background: var(--bg); color: var(--navy); }
+    header { background: linear-gradient(135deg, var(--navy), #164e63); color:#fff; padding: 48px 8vw 40px; }
+    header .code { letter-spacing:.12em; text-transform:uppercase; color:#67e8f9; font-weight:700; }
+    header h1 { margin: 8px 0 12px; font-size: clamp(28px, 4vw, 44px); }
+    nav { position: sticky; top:0; background:#fff; border-bottom:1px solid #e2e8f0; display:flex; gap:12px; overflow:auto; padding:10px 8vw; z-index:5; }
+    nav a { color: var(--teal); text-decoration:none; font-weight:600; white-space:nowrap; }
+    main { padding: 24px 8vw 80px; display:grid; gap:28px; }
+    section { background: var(--card); border-radius: 16px; padding: 28px 32px; box-shadow: 0 8px 24px rgba(15,23,42,.06); }
+    .kicker { color: var(--teal); font-weight: 800; }
+    h2 { margin-top: 4px; }
+    ul { line-height: 1.55; }
+    .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap:16px; }
+    figure { margin:0; background:#f1f5f9; border-radius:12px; padding:8px; }
+    img { width:100%; border-radius:8px; }
+    figcaption { font-size:12px; color:var(--muted); padding:6px; }
+    .ans { color:var(--muted); margin:6px 0 14px; font-family: ui-monospace, Consolas, monospace; font-size:13px; white-space:pre-wrap; }
+    footer { padding: 24px 8vw; color:#64748b; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="code">EDA 02</div>
+    <h1>Hotel Harmony: Data Insights for Optimized Operations</h1>
+    <p>Hotel booking demand (Antonio, Almeida &amp; Nunes; Kaggle jessemostipak/hotel-booking-demand)</p>
+  </header>
+  <nav>
+    <a href="#s1">Overview</a><a href="#s2">Problem</a><a href="#s3">Methodology</a>
+    <a href="#s4">Data</a><a href="#s5">Findings</a><a href="#s6">Limitations</a>
+    <a href="#s7">Conclusion</a><a href="#s8">Recommendations</a><a href="#qa">Q&amp;A</a>
+  </nav>
+  <main>
+    <section id="s1"><div class="kicker">1</div><h2>Overview</h2><p>Elite Hotels International reviews city and resort booking history to stabilize occupancy, cut avoidable cancellations, and price rooms using ADR and channel mix.</p><ul><li>Internal: Management, Operations, Marketing, Customer Service</li><li>External: Guests, Travel agencies, Suppliers</li></ul></section>
+    <section id="s2"><div class="kicker">2</div><h2>Problem Statement</h2><p>Booking patterns and guest satisfaction are uneven across hotels, channels, and seasons. Management needs evidence on lead time, cancellations, demand peaks, and revenue so operations and marketing can allocate rooms, staff, and promotions more effectively.</p></section>
+    <section id="s3"><div class="kicker">3</div><h2>Proposed Methodology</h2><ul><li>Clean missing agent/company/children fields, parse arrival dates, drop duplicates and zero-guest rows.</li><li>Define metrics: lead time, cancellation rate, stay length, special requests, and ADR-based revenue.</li><li>Profile demand by hotel type, month, market segment, and country.</li><li>Relate lead time and deposit type to cancellations; fit a logistic baseline.</li><li>Convert findings into overbooking, pricing, and loyalty actions.</li></ul></section>
+    <section id="s4"><div class="kicker">4</div><h2>Data Overview</h2><ul><li>rows_raw: 119390</li><li>rows_clean: 87229</li><li>cancellation_rate: 0.2752</li><li>hotels: {&#x27;City Hotel&#x27;: 53273, &#x27;Resort Hotel&#x27;: 33956}</li><li>years: [2015, 2016, 2017]</li></ul><div class="grid"><figure><img src="../outputs/hotel_harmony/figures/01_hotel_cancellations.png" alt="chart"><figcaption>01_hotel_cancellations.png</figcaption></figure><figure><img src="../outputs/hotel_harmony/figures/02_arrivals_by_month.png" alt="chart"><figcaption>02_arrivals_by_month.png</figcaption></figure><figure><img src="../outputs/hotel_harmony/figures/03_lead_time_cancel.png" alt="chart"><figcaption>03_lead_time_cancel.png</figcaption></figure><figure><img src="../outputs/hotel_harmony/figures/04_adr_by_year.png" alt="chart"><figcaption>04_adr_by_year.png</figcaption></figure><figure><img src="../outputs/hotel_harmony/figures/05_adr_by_segment.png" alt="chart"><figcaption>05_adr_by_segment.png</figcaption></figure><figure><img src="../outputs/hotel_harmony/figures/06_lead_time_segment.png" alt="chart"><figcaption>06_lead_time_segment.png</figcaption></figure></div></section>
+    <section id="s5"><div class="kicker">5</div><h2>Key Findings</h2><ul><li>Overall cancellation rate is 27.5% after cleaning.</li><li>Guests book about 80 days ahead on average; longer lead times track with more cancellations (r=0.18).</li><li>August is the busiest arrival month; August leads ADR × stay revenue.</li><li>PRT and other top origin markets dominate volume; PRT is the single largest country.</li><li>A logistic model using lead time, deposit, segment, and requests reaches AUC 0.77 on a hold-out set.</li></ul></section>
+    <section id="s6"><div class="kicker">6</div><h2>Limitations</h2><ul><li>The public dataset covers two hotels in Portugal, not a global brand.</li><li>ADR is not full P&amp;L; extras, commissions, and costs are missing.</li><li>Company and agent IDs are anonymized and heavily missing.</li><li>Guest satisfaction is proxied by requests and repeats, not survey scores.</li><li>Cancellation model is explanatory, not a production overbooking engine.</li></ul></section>
+    <section id="s7"><div class="kicker">7</div><h2>Conclusion</h2><p>Demand is seasonal and channel-dependent. City vs resort mix, non-refundable deposits, and long lead times are the practical levers for cancellation control, while ADR and segment mix drive revenue planning.</p></section>
+    <section id="s8"><div class="kicker">8</div><h2>Recommendations</h2><ul><li>Tighten deposit or reminder policies on long-lead leisure bookings with high cancel risk.</li><li>Staff and price for the summer/peak-month wave rather than a flat annual plan.</li><li>Protect relationships with TA/TO and Direct channels that carry volume.</li><li>Use parking and special-request data to design upsell packages, not only room rate.</li><li>Build a repeat-guest offer; loyalty stays look different from first-time transient stays.</li></ul></section>
+    <section id="qa"><div class="kicker">Appendix</div><h2>Solution guide (assignment questions)</h2><h3>Basic questions</h3><ol><li><strong>Average lead time</strong><div class='ans'>79.97</div></li><li><strong>Bookings by hotel type</strong><div class='ans'>{&#x27;City Hotel&#x27;: 53273, &#x27;Resort Hotel&#x27;: 33956}</div></li><li><strong>Canceled bookings</strong><div class='ans'>24008</div></li><li><strong>Most common arrival month</strong><div class='ans'>August</div></li><li><strong>Average special requests</strong><div class='ans'>0.699</div></li><li><strong>Country with most bookings</strong><div class='ans'>PRT</div></li><li><strong>Average ADR by hotel type</strong><div class='ans'>{&#x27;City Hotel&#x27;: 111.17, &#x27;Resort Hotel&#x27;: 99.06}</div></li><li><strong>Share requiring parking</strong><div class='ans'>0.0838</div></li><li><strong>Average week/weekend nights</strong><div class='ans'>{&#x27;week&#x27;: 2.62, &#x27;weekend&#x27;: 1.0}</div></li><li><strong>Bookings with a travel agent id</strong><div class='ans'>75088</div></li></ol><h3>Medium questions</h3><ol><li><strong>Cancellation rate by hotel</strong><div class='ans'>{&#x27;City Hotel&#x27;: 0.301, &#x27;Resort Hotel&#x27;: 0.2348}</div></li><li><strong>Average ADR by market segment</strong><div class='ans'>{&#x27;Aviation&#x27;: 100.61, &#x27;Complementary&#x27;: 3.09, &#x27;Corporate&#x27;: 68.34, &#x27;Direct&#x27;: 116.78, &#x27;Groups&#x27;: 75.17, &#x27;Offline TA/TO&#x27;: 81.57, &#x27;Online TA&#x27;: 118.3, &#x27;Undefined&#x27;: 15.0}</div></li><li><strong>Lead time vs cancellation correlation</strong><div class='ans'>0.1845</div></li><li><strong>Top distribution channels</strong><div class='ans'>{&#x27;TA/TO&#x27;: 69027, &#x27;Direct&#x27;: 12954, &#x27;Corporate&#x27;: 5062, &#x27;GDS&#x27;: 181, &#x27;Undefined&#x27;: 5}</div></li><li><strong>Average previous cancellations by hotel</strong><div class='ans'>{&#x27;City Hotel&#x27;: 0.036, &#x27;Resort Hotel&#x27;: 0.022}</div></li><li><strong>ADR trend by year</strong><div class='ans'>{2015: 92.36, 2016: 101.57, 2017: 118.91}</div></li><li><strong>Highest revenue month (ADR x nights)</strong><div class='ans'>August</div></li><li><strong>Special requests vs ADR correlation</strong><div class='ans'>0.1464</div></li><li><strong>Stay length repeat vs new guests</strong><div class='ans'>{0: 3.7, 1: 1.95}</div></li><li><strong>Most booked reserved room types</strong><div class='ans'>{&#x27;A&#x27;: 56435, &#x27;D&#x27;: 17376, &#x27;E&#x27;: 6036, &#x27;F&#x27;: 2820, &#x27;G&#x27;: 2050}</div></li></ol><h3>Advanced questions</h3><ol><li><strong>Logistic model AUC for cancellation</strong><div class='ans'>0.7658</div></li><li><strong>Strongest cancellation drivers (coefficients)</strong><div class='ans'>{&#x27;deposit_type_Non Refund&#x27;: 2.265, &#x27;deposit_type_No Deposit&#x27;: -1.502, &#x27;deposit_type_Refundable&#x27;: -0.999, &#x27;market_segment_Online TA&#x27;: 0.847, &#x27;market_segment_Offline TA/TO&#x27;: -0.69, &#x27;total_of_special_requests&#x27;: -0.552, &#x27;lead_time&#x27;: 0.444, &#x27;customer_type_Transient&#x27;: 0.422}</div></li><li><strong>ADR vs party composition (linear coefficients)</strong><div class='ans'>{&#x27;adults&#x27;: 20.698, &#x27;children&#x27;: 38.649, &#x27;babies&#x27;: 6.723, &#x27;intercept&#x27;: 62.118}</div></li><li><strong>Booking changes vs special requests correlation</strong><div class='ans'>0.0183</div></li><li><strong>Seasonal cancellation rates</strong><div class='ans'>{&#x27;Autumn&#x27;: 0.2334, &#x27;Spring&#x27;: 0.2813, &#x27;Summer&#x27;: 0.3158, &#x27;Winter&#x27;: 0.2409}</div></li><li><strong>Lead time median by market segment</strong><div class='ans'>{&#x27;Aviation&#x27;: 3.0, &#x27;Complementary&#x27;: 3.0, &#x27;Corporate&#x27;: 5.0, &#x27;Direct&#x27;: 15.0, &#x27;Groups&#x27;: 115.0, &#x27;Offline TA/TO&#x27;: 82.0, &#x27;Online TA&#x27;: 55.0, &#x27;Undefined&#x27;: 1.5}</div></li></ol></section>
+  </main>
+  <footer>Generated from the cleaned dataset and the assignment brief. Not medical or investment advice.</footer>
+</body>
+</html>

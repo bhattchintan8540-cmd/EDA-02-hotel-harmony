@@ -1,0 +1,255 @@
+{
+  "slug": "hotel_harmony",
+  "code": "EDA 02",
+  "title": "Hotel Harmony: Data Insights for Optimized Operations",
+  "dataset": "Hotel booking demand (Antonio, Almeida & Nunes; Kaggle jessemostipak/hotel-booking-demand)",
+  "overview": "Elite Hotels International reviews city and resort booking history to stabilize occupancy, cut avoidable cancellations, and price rooms using ADR and channel mix.",
+  "problem_statement": "Booking patterns and guest satisfaction are uneven across hotels, channels, and seasons. Management needs evidence on lead time, cancellations, demand peaks, and revenue so operations and marketing can allocate rooms, staff, and promotions more effectively.",
+  "methodology": [
+    "Clean missing agent/company/children fields, parse arrival dates, drop duplicates and zero-guest rows.",
+    "Define metrics: lead time, cancellation rate, stay length, special requests, and ADR-based revenue.",
+    "Profile demand by hotel type, month, market segment, and country.",
+    "Relate lead time and deposit type to cancellations; fit a logistic baseline.",
+    "Convert findings into overbooking, pricing, and loyalty actions."
+  ],
+  "data_overview": {
+    "rows_raw": 119390,
+    "rows_clean": 87229,
+    "cancellation_rate": 0.2752,
+    "hotels": {
+      "City Hotel": 53273,
+      "Resort Hotel": 33956
+    },
+    "years": [
+      2015,
+      2016,
+      2017
+    ]
+  },
+  "key_findings": [
+    "Overall cancellation rate is 27.5% after cleaning.",
+    "Guests book about 80 days ahead on average; longer lead times track with more cancellations (r=0.18).",
+    "August is the busiest arrival month; August leads ADR \u00d7 stay revenue.",
+    "PRT and other top origin markets dominate volume; PRT is the single largest country.",
+    "A logistic model using lead time, deposit, segment, and requests reaches AUC 0.77 on a hold-out set."
+  ],
+  "limitations": [
+    "The public dataset covers two hotels in Portugal, not a global brand.",
+    "ADR is not full P&L; extras, commissions, and costs are missing.",
+    "Company and agent IDs are anonymized and heavily missing.",
+    "Guest satisfaction is proxied by requests and repeats, not survey scores.",
+    "Cancellation model is explanatory, not a production overbooking engine."
+  ],
+  "conclusion": "Demand is seasonal and channel-dependent. City vs resort mix, non-refundable deposits, and long lead times are the practical levers for cancellation control, while ADR and segment mix drive revenue planning.",
+  "recommendations": [
+    "Tighten deposit or reminder policies on long-lead leisure bookings with high cancel risk.",
+    "Staff and price for the summer/peak-month wave rather than a flat annual plan.",
+    "Protect relationships with TA/TO and Direct channels that carry volume.",
+    "Use parking and special-request data to design upsell packages, not only room rate.",
+    "Build a repeat-guest offer; loyalty stays look different from first-time transient stays."
+  ],
+  "qa": {
+    "basic": [
+      {
+        "q": "Average lead time",
+        "a": 79.97
+      },
+      {
+        "q": "Bookings by hotel type",
+        "a": {
+          "City Hotel": 53273,
+          "Resort Hotel": 33956
+        }
+      },
+      {
+        "q": "Canceled bookings",
+        "a": 24008
+      },
+      {
+        "q": "Most common arrival month",
+        "a": "August"
+      },
+      {
+        "q": "Average special requests",
+        "a": 0.699
+      },
+      {
+        "q": "Country with most bookings",
+        "a": "PRT"
+      },
+      {
+        "q": "Average ADR by hotel type",
+        "a": {
+          "City Hotel": 111.17,
+          "Resort Hotel": 99.06
+        }
+      },
+      {
+        "q": "Share requiring parking",
+        "a": 0.0838
+      },
+      {
+        "q": "Average week/weekend nights",
+        "a": {
+          "week": 2.62,
+          "weekend": 1.0
+        }
+      },
+      {
+        "q": "Bookings with a travel agent id",
+        "a": 75088
+      }
+    ],
+    "medium": [
+      {
+        "q": "Cancellation rate by hotel",
+        "a": {
+          "City Hotel": 0.301,
+          "Resort Hotel": 0.2348
+        }
+      },
+      {
+        "q": "Average ADR by market segment",
+        "a": {
+          "Aviation": 100.61,
+          "Complementary": 3.09,
+          "Corporate": 68.34,
+          "Direct": 116.78,
+          "Groups": 75.17,
+          "Offline TA/TO": 81.57,
+          "Online TA": 118.3,
+          "Undefined": 15.0
+        }
+      },
+      {
+        "q": "Lead time vs cancellation correlation",
+        "a": 0.1845
+      },
+      {
+        "q": "Top distribution channels",
+        "a": {
+          "TA/TO": 69027,
+          "Direct": 12954,
+          "Corporate": 5062,
+          "GDS": 181,
+          "Undefined": 5
+        }
+      },
+      {
+        "q": "Average previous cancellations by hotel",
+        "a": {
+          "City Hotel": 0.036,
+          "Resort Hotel": 0.022
+        }
+      },
+      {
+        "q": "ADR trend by year",
+        "a": {
+          "2015": 92.36,
+          "2016": 101.57,
+          "2017": 118.91
+        }
+      },
+      {
+        "q": "Highest revenue month (ADR x nights)",
+        "a": "August"
+      },
+      {
+        "q": "Special requests vs ADR correlation",
+        "a": 0.1464
+      },
+      {
+        "q": "Stay length repeat vs new guests",
+        "a": {
+          "0": 3.7,
+          "1": 1.95
+        }
+      },
+      {
+        "q": "Most booked reserved room types",
+        "a": {
+          "A": 56435,
+          "D": 17376,
+          "E": 6036,
+          "F": 2820,
+          "G": 2050
+        }
+      }
+    ],
+    "advanced": [
+      {
+        "q": "Logistic model AUC for cancellation",
+        "a": 0.7658
+      },
+      {
+        "q": "Strongest cancellation drivers (coefficients)",
+        "a": {
+          "deposit_type_Non Refund": 2.265,
+          "deposit_type_No Deposit": -1.502,
+          "deposit_type_Refundable": -0.999,
+          "market_segment_Online TA": 0.847,
+          "market_segment_Offline TA/TO": -0.69,
+          "total_of_special_requests": -0.552,
+          "lead_time": 0.444,
+          "customer_type_Transient": 0.422
+        }
+      },
+      {
+        "q": "ADR vs party composition (linear coefficients)",
+        "a": {
+          "adults": 20.698,
+          "children": 38.649,
+          "babies": 6.723,
+          "intercept": 62.118
+        }
+      },
+      {
+        "q": "Booking changes vs special requests correlation",
+        "a": 0.0183
+      },
+      {
+        "q": "Seasonal cancellation rates",
+        "a": {
+          "Autumn": 0.2334,
+          "Spring": 0.2813,
+          "Summer": 0.3158,
+          "Winter": 0.2409
+        }
+      },
+      {
+        "q": "Lead time median by market segment",
+        "a": {
+          "Aviation": 3.0,
+          "Complementary": 3.0,
+          "Corporate": 5.0,
+          "Direct": 15.0,
+          "Groups": 115.0,
+          "Offline TA/TO": 82.0,
+          "Online TA": 55.0,
+          "Undefined": 1.5
+        }
+      }
+    ]
+  },
+  "figures": [
+    "outputs\\hotel_harmony\\figures\\01_hotel_cancellations.png",
+    "outputs\\hotel_harmony\\figures\\02_arrivals_by_month.png",
+    "outputs\\hotel_harmony\\figures\\03_lead_time_cancel.png",
+    "outputs\\hotel_harmony\\figures\\04_adr_by_year.png",
+    "outputs\\hotel_harmony\\figures\\05_adr_by_segment.png",
+    "outputs\\hotel_harmony\\figures\\06_lead_time_segment.png"
+  ],
+  "stakeholders": {
+    "internal": [
+      "Management",
+      "Operations",
+      "Marketing",
+      "Customer Service"
+    ],
+    "external": [
+      "Guests",
+      "Travel agencies",
+      "Suppliers"
+    ]
+  }
+}

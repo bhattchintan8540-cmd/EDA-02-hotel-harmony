@@ -1,0 +1,38 @@
+# Hotel Harmony: Data Insights for Optimized Operations
+
+**EDA 02** — Hotel booking demand
+
+This repository is a standalone Exploratory Data Analysis project from the assignment brief in `docs/assignments/`.
+
+## Presentations
+
+Slides follow:
+
+1. Overview
+2. Problem Statement
+3. Proposed Methodology
+4. Data Overview
+5. Key Findings
+6. Limitations
+7. Conclusion
+8. Recommendations
+
+- HTML: `presentations/EDA02_hotel_harmony.html`
+- PowerPoint: `presentations/EDA02_hotel_harmony.pptx`
+
+## Setup
+
+```bash
+python -m venv .venv
+.venv\Scripts\activate
+python -m pip install -r requirements.txt
+```
+
+## Run
+
+```bash
+python run.py
+python -m pytest -q
+```
+
+Outputs land in `outputs/` (figures, `findings.json` with the solution guide) and `presentations/`.
