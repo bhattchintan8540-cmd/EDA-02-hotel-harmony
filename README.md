@@ -20,6 +20,12 @@ Slides follow:
 - HTML: `presentations/EDA02_hotel_harmony.html`
 - PowerPoint: `presentations/EDA02_hotel_harmony.pptx`
 
+## Assignment deliverables
+
+- Case study: `docs/CASE_STUDY.md`
+- Solution guide: `docs/SOLUTION_GUIDE.md`
+- Additional resources: `docs/ADDITIONAL_RESOURCES.md`
+
 ## Setup
 
 ```bash

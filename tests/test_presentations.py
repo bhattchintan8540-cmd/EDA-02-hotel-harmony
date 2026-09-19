@@ -30,7 +30,7 @@ def test_presentation_exports(tmp_path, monkeypatch):
     assert pptx.exists() and pptx.stat().st_size > 1000
     text = html.read_text(encoding="utf-8")
     for heading in [
-        "1) Overview",
+        "Overview",
         "Problem Statement",
         "Proposed Methodology",
         "Data Overview",
@@ -39,5 +39,6 @@ def test_presentation_exports(tmp_path, monkeypatch):
         "Conclusion",
         "Recommendations",
     ]:
-        assert heading.split(") ")[-1] in text or heading in text
-    assert PRESENTATIONS.name  # config still importable
+        assert heading in text
+    assert "Additional resources" in text
+    assert PRESENTATIONS.name

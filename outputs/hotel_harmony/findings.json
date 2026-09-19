@@ -24,7 +24,9 @@
       2015,
       2016,
       2017
-    ]
+    ],
+    "average_stay_nights": 3.63,
+    "realized_stay_share": 0.7248
   },
   "key_findings": [
     "Overall cancellation rate is 27.5% after cleaning.",
@@ -232,12 +234,32 @@
     ]
   },
   "figures": [
-    "outputs\\hotel_harmony\\figures\\01_hotel_cancellations.png",
-    "outputs\\hotel_harmony\\figures\\02_arrivals_by_month.png",
-    "outputs\\hotel_harmony\\figures\\03_lead_time_cancel.png",
-    "outputs\\hotel_harmony\\figures\\04_adr_by_year.png",
-    "outputs\\hotel_harmony\\figures\\05_adr_by_segment.png",
-    "outputs\\hotel_harmony\\figures\\06_lead_time_segment.png"
+    "outputs/hotel_harmony/figures/01_hotel_cancellations.png",
+    "outputs/hotel_harmony/figures/02_arrivals_by_month.png",
+    "outputs/hotel_harmony/figures/03_lead_time_cancel.png",
+    "outputs/hotel_harmony/figures/04_adr_by_year.png",
+    "outputs/hotel_harmony/figures/05_adr_by_segment.png",
+    "outputs/hotel_harmony/figures/06_lead_time_segment.png"
+  ],
+  "data_dictionary": {
+    "hotel": "Resort Hotel or City Hotel",
+    "is_canceled": "1 if canceled, else 0",
+    "lead_time": "Days between booking and arrival",
+    "arrival_date_*": "Arrival year, month, week, day",
+    "stays_in_weekend_nights / stays_in_week_nights": "Nights booked",
+    "adults / children / babies": "Party composition",
+    "country": "Guest country of origin",
+    "market_segment": "Market segment",
+    "distribution_channel": "Booking channel",
+    "adr": "Average daily rate",
+    "deposit_type": "No Deposit, Non Refund, Refundable",
+    "total_of_special_requests": "Count of special requests",
+    "reservation_status": "Canceled, Check-Out, No-Show"
+  },
+  "additional_resources": [
+    "https://www.kaggle.com/jessemostipak/hotel-booking-demand",
+    "https://www.sciencedirect.com/science/article/pii/S2352340918315191",
+    "docs/CASE_STUDY.md, docs/SOLUTION_GUIDE.md"
   ],
   "stakeholders": {
     "internal": [

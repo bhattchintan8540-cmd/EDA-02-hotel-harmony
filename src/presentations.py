@@ -7,8 +7,7 @@ import html
 from pptx import Presentation
 from pptx.dml.color import RGBColor
 from pptx.enum.shapes import MSO_SHAPE
-from pptx.enum.text import PP_ALIGN
-from pptx.util import Emu, Inches, Pt
+from pptx.util import Inches, Pt
 
 from .config import PRESENTATIONS, ROOT
 
@@ -17,6 +16,10 @@ TEAL = RGBColor(14, 116, 144)
 WHITE = RGBColor(255, 255, 255)
 SLATE = RGBColor(51, 65, 85)
 LIGHT = RGBColor(241, 245, 249)
+
+
+def _norm(rel: str) -> Path:
+    return Path(str(rel).replace("\\", "/"))
 
 
 def _set_run(run, text, size=18, bold=False, color=NAVY):
@@ -68,19 +71,43 @@ def _as_lines(value, limit=8):
     if isinstance(value, list):
         return [str(v) for v in value[:limit]]
     if isinstance(value, dict):
-        lines = []
-        for k, v in list(value.items())[:limit]:
-            lines.append(f"{k}: {v}")
-        return lines
+        return [f"{k}: {v}" for k, v in list(value.items())[:limit]]
     return [str(value)]
+
+
+def _figure_paths(findings: dict) -> list[Path]:
+    paths = []
+    for rel in findings.get("figures", []):
+        path = ROOT / _norm(rel)
+        if path.exists():
+            paths.append(path)
+    return paths
+
+
+def _add_picture_slide(prs, title: str, images: list[Path]):
+    if not images:
+        return
+    slide = _blank(prs)
+    _title_box(slide, title)
+    if len(images) == 1:
+        slide.shapes.add_picture(str(images[0]), Inches(1.8), Inches(1.2), width=Inches(9.6))
+        return
+    coords = [
+        (0.55, 1.15),
+        (6.85, 1.15),
+        (0.55, 4.05),
+        (6.85, 4.05),
+    ]
+    for img, (x, y) in zip(images[:4], coords):
+        slide.shapes.add_picture(str(img), Inches(x), Inches(y), width=Inches(5.9))
 
 
 def build_pptx(findings: dict) -> Path:
     prs = Presentation()
     prs.slide_width = Inches(13.333)
     prs.slide_height = Inches(7.5)
+    figures = _figure_paths(findings)
 
-    # Title
     slide = _blank(prs)
     fill = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, prs.slide_height)
     fill.fill.solid()
@@ -97,42 +124,46 @@ def build_pptx(findings: dict) -> Path:
     box3 = slide.shapes.add_textbox(Inches(0.9), Inches(5.2), Inches(11.5), Inches(1))
     _set_run(box3.text_frame.paragraphs[0].add_run(), findings.get("dataset", ""), size=16, color=LIGHT)
 
-    # 1 Overview
     s = _blank(prs)
     _title_box(s, "1) Overview")
-    _bullets(s, [findings["overview"]] + [f"Internal: {', '.join(findings['stakeholders']['internal'])}", f"External: {', '.join(findings['stakeholders']['external'])}"])
+    _bullets(
+        s,
+        [findings["overview"]]
+        + [
+            f"Internal: {', '.join(findings['stakeholders']['internal'])}",
+            f"External: {', '.join(findings['stakeholders']['external'])}",
+        ],
+    )
 
-    # 2 Problem
     s = _blank(prs)
     _title_box(s, "2) Problem Statement")
     _bullets(s, _as_lines(findings["problem_statement"], 6))
 
-    # 3 Methodology
     s = _blank(prs)
     _title_box(s, "3) Proposed Methodology")
     _bullets(s, findings["methodology"])
 
-    # 4 Data overview
     s = _blank(prs)
     _title_box(s, "4) Data Overview")
-    _bullets(s, _as_lines(findings["data_overview"], 10))
+    overview_lines = _as_lines(findings["data_overview"], 8)
+    if findings.get("data_dictionary"):
+        overview_lines.append("Data dictionary: see docs/CASE_STUDY.md")
+    _bullets(s, overview_lines)
+    _add_picture_slide(prs, "4) Data Overview — charts", figures[:4])
 
-    # 5 Key findings
     s = _blank(prs)
     _title_box(s, "5) Key Findings")
     _bullets(s, findings["key_findings"])
+    _add_picture_slide(prs, "5) Key Findings — charts", figures[4:8])
 
-    # 6 Limitations
     s = _blank(prs)
     _title_box(s, "6) Limitations")
     _bullets(s, findings["limitations"])
 
-    # 7 Conclusion
     s = _blank(prs)
     _title_box(s, "7) Conclusion")
     _bullets(s, _as_lines(findings["conclusion"], 6))
 
-    # 8 Recommendations
     s = _blank(prs)
     _title_box(s, "8) Recommendations")
     _bullets(s, findings["recommendations"])
@@ -145,9 +176,9 @@ def build_pptx(findings: dict) -> Path:
 def build_html(findings: dict) -> Path:
     figs = []
     for rel in findings.get("figures", []):
-        path = ROOT / rel
+        path = ROOT / _norm(rel)
         if path.exists():
-            figs.append(path.relative_to(PRESENTATIONS).as_posix() if False else Path("..", rel).as_posix())
+            figs.append("../" + _norm(rel).as_posix())
 
     def section(num, title, body_html):
         return f'<section id="s{num}"><div class="kicker">{num}</div><h2>{html.escape(title)}</h2>{body_html}</section>'
@@ -156,6 +187,7 @@ def build_html(findings: dict) -> Path:
         return "<ul>" + "".join(f"<li>{html.escape(str(i))}</li>" for i in items) + "</ul>"
 
     data_items = [f"{k}: {v}" for k, v in findings["data_overview"].items()]
+    dict_items = [f"{k}: {v}" for k, v in findings.get("data_dictionary", {}).items()]
     img_html = "".join(
         f'<figure><img src="{html.escape(src)}" alt="chart"><figcaption>{html.escape(Path(src).name)}</figcaption></figure>'
         for src in figs
@@ -164,8 +196,11 @@ def build_html(findings: dict) -> Path:
     for level, rows in findings.get("qa", {}).items():
         qa_blocks.append(f"<h3>{html.escape(level.title())} questions</h3><ol>")
         for row in rows:
-            qa_blocks.append(f"<li><strong>{html.escape(row['q'])}</strong><div class='ans'>{html.escape(str(row['a']))}</div></li>")
+            qa_blocks.append(
+                f"<li><strong>{html.escape(row['q'])}</strong><div class='ans'>{html.escape(str(row['a']))}</div></li>"
+            )
         qa_blocks.append("</ol>")
+    resources = findings.get("additional_resources") or []
 
     page = f"""<!DOCTYPE html>
 <html lang="en">
@@ -210,14 +245,15 @@ def build_html(findings: dict) -> Path:
     {section('1', 'Overview', '<p>' + html.escape(findings['overview']) + '</p>' + lis(['Internal: ' + ', '.join(findings['stakeholders']['internal']), 'External: ' + ', '.join(findings['stakeholders']['external'])]))}
     {section('2', 'Problem Statement', '<p>' + html.escape(findings['problem_statement']) + '</p>')}
     {section('3', 'Proposed Methodology', lis(findings['methodology']))}
-    {section('4', 'Data Overview', lis(data_items) + '<div class="grid">' + img_html + '</div>')}
+    {section('4', 'Data Overview', lis(data_items) + (lis(dict_items) if dict_items else '') + '<div class="grid">' + img_html + '</div>')}
     {section('5', 'Key Findings', lis(findings['key_findings']))}
     {section('6', 'Limitations', lis(findings['limitations']))}
     {section('7', 'Conclusion', '<p>' + html.escape(findings['conclusion']) + '</p>')}
     {section('8', 'Recommendations', lis(findings['recommendations']))}
     <section id="qa"><div class="kicker">Appendix</div><h2>Solution guide (assignment questions)</h2>{''.join(qa_blocks)}</section>
+    <section id="resources"><div class="kicker">Appendix</div><h2>Additional resources</h2>{lis(resources)}</section>
   </main>
-  <footer>Generated from the cleaned dataset and the assignment brief. Not medical or investment advice.</footer>
+  <footer>Generated from the cleaned dataset and the assignment brief. Written case study and solution guide: docs/. Not medical or investment advice.</footer>
 </body>
 </html>
 """

@@ -14,7 +14,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
-from .config import project_output, savefig
+from .config import ROOT, project_output, savefig
 from .download import load_hotels
 
 MONTH_ORDER = [
@@ -242,6 +242,8 @@ def run() -> dict:
             "cancellation_rate": round(cancel_rate, 4),
             "hotels": {k: int(v) for k, v in hotel_mix.items()},
             "years": sorted(int(y) for y in df["arrival_date_year"].dropna().unique()),
+            "average_stay_nights": round(float(df["total_nights"].mean()), 2),
+            "realized_stay_share": round(float(1 - cancel_rate), 4),
         },
         "key_findings": [
             f"Overall cancellation rate is {cancel_rate:.1%} after cleaning.",
@@ -270,7 +272,27 @@ def run() -> dict:
             "Build a repeat-guest offer; loyalty stays look different from first-time transient stays.",
         ],
         "qa": qa,
-        "figures": [str(p.relative_to(out.parent.parent)) for p in sorted(fig_dir.glob("*.png"))],
+        "figures": [p.relative_to(ROOT).as_posix() for p in sorted(fig_dir.glob("*.png"))],
+        "data_dictionary": {
+            "hotel": "Resort Hotel or City Hotel",
+            "is_canceled": "1 if canceled, else 0",
+            "lead_time": "Days between booking and arrival",
+            "arrival_date_*": "Arrival year, month, week, day",
+            "stays_in_weekend_nights / stays_in_week_nights": "Nights booked",
+            "adults / children / babies": "Party composition",
+            "country": "Guest country of origin",
+            "market_segment": "Market segment",
+            "distribution_channel": "Booking channel",
+            "adr": "Average daily rate",
+            "deposit_type": "No Deposit, Non Refund, Refundable",
+            "total_of_special_requests": "Count of special requests",
+            "reservation_status": "Canceled, Check-Out, No-Show",
+        },
+        "additional_resources": [
+            "https://www.kaggle.com/jessemostipak/hotel-booking-demand",
+            "https://www.sciencedirect.com/science/article/pii/S2352340918315191",
+            "docs/CASE_STUDY.md, docs/SOLUTION_GUIDE.md",
+        ],
         "stakeholders": {
             "internal": ["Management", "Operations", "Marketing", "Customer Service"],
             "external": ["Guests", "Travel agencies", "Suppliers"],

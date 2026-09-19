@@ -11,7 +11,8 @@ if str(ROOT) not in sys.path:
 
 from src.hotel_harmony import run
 from src.presentations import build_all
-from src.config import OUTPUTS, PRESENTATIONS
+from src.reports import write_docs
+from src.config import OUTPUTS
 
 
 def assess(findings: dict) -> list[str]:
@@ -32,7 +33,8 @@ def assess(findings: dict) -> list[str]:
 def main() -> int:
     findings = run()
     issues = assess(findings)
-    paths = build_all([findings])
+    docs = write_docs(findings)
+    paths = build_all([findings]) + docs
     report = {
         "title": findings["title"],
         "rows_clean": findings["data_overview"].get("rows_clean"),
