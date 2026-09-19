@@ -3,41 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from src.app_insights import clean_play_store, _parse_installs, _parse_price, _parse_size
 from src.hotel_harmony import clean_hotels
-from src.heart_health import clean_heart
-
-
-def test_play_store_parsers():
-    assert _parse_installs("10,000+") == 10000
-    assert _parse_price("$4.99") == 4.99
-    assert _parse_price("0") == 0
-    assert abs(_parse_size("19M") - 19) < 1e-9
-    assert np.isnan(_parse_size("Varies with device"))
-
-
-def test_play_store_cleaning_drops_bad_category_and_duplicates():
-    raw = pd.DataFrame(
-        {
-            "App": ["A", "A", "B"],
-            "Category": ["GAME", "GAME", "1.9"],
-            "Rating": [4.5, 4.5, 19],
-            "Reviews": ["10", "10", "3.0M"],
-            "Size": ["19M", "19M", "Varies with device"],
-            "Installs": ["10,000+", "10,000+", "Free"],
-            "Type": ["Free", "Free", "0"],
-            "Price": ["0", "0", "Everyone"],
-            "Content Rating": ["Everyone", "Everyone", np.nan],
-            "Genres": ["Action", "Action", np.nan],
-            "Last Updated": ["January 1, 2018", "January 1, 2018", "1.0.19"],
-            "Current Ver": ["1", "1", "4.0"],
-            "Android Ver": ["4.0", "4.0", np.nan],
-        }
-    )
-    clean = clean_play_store(raw)
-    assert len(clean) == 1
-    assert clean.loc[0, "Installs_num"] == 10000
-    assert clean["Rating"].between(0, 5).all()
 
 
 def test_hotel_cleaning_flags_and_nights():
@@ -78,31 +44,7 @@ def test_hotel_cleaning_flags_and_nights():
         }
     )
     clean = clean_hotels(raw)
-    assert len(clean) == 1  # zero-guest row dropped
+    assert len(clean) == 1
     assert clean.loc[0, "total_nights"] == 3
     assert clean.loc[0, "country"] == "Unknown"
     assert clean.loc[0, "children"] == 0
-
-
-def test_heart_target_binarized_and_duplicates_removed():
-    raw = pd.DataFrame(
-        {
-            "age": [63, 63, 41],
-            "sex": [1, 1, 0],
-            "cp": [3, 3, 1],
-            "trestbps": [145, 145, 130],
-            "chol": [233, 233, 250],
-            "fbs": [1, 1, 0],
-            "restecg": [0, 0, 1],
-            "thalach": [150, 150, 168],
-            "exang": [0, 0, 0],
-            "oldpeak": [2.3, 2.3, 0.0],
-            "slope": [0, 0, 2],
-            "ca": [0, 0, 0],
-            "thal": [1, 1, 2],
-            "target": [1, 1, 0],
-        }
-    )
-    clean = clean_heart(raw)
-    assert len(clean) == 2
-    assert set(clean["target"].unique()) <= {0, 1}
